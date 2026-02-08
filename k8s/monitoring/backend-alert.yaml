@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: backend-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: backend.rules
+      rules:
+        - alert: BackendDown
+          expr: absent(up{namespace="manageproduct", service="backend"}) == 1
+          for: 30s
+          labels:
+            severity: critical
+          annotations:
+            summary: "Backend is DOWN"
+            description: "Le service backend n’est plus scrapé par Prometheus depuis plus de 30s."
